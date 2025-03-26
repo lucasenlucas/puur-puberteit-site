@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puberteit Quiz</title>
+    <style>
+        body {
+            background-color: #FFDE59;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            transition: background 0.5s;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #ff914d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #ff7733;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Puberteit Quiz</h1>
+        <p class="question">Vraag komt hier...</p>
+        <div id="answers"></div>
+        <p class="score">Score: <span id="score">0</span></p>
+    </div>
+
+    <script>
+        const quiz = {
+            "Hoofdstuk 2": [
+                { question: "Wat is menstruatie?", options: ["De groei van een embryo", "De maandelijkse afstoting van het baarmoederslijmvlies", "De eisprong"], answer: "De maandelijkse afstoting van het baarmoederslijmvlies" },
+                { question: "Welk hormoon speelt een grote rol bij de menstruatiecyclus?", options: ["Insuline", "Oestrogeen", "Adrenaline"], answer: "Oestrogeen" },
+                { question: "Welke menstruatieproducten zijn herbruikbaar?", options: ["Tampons", "Menstruatiecups", "Maandverband"], answer: "Menstruatiecups" },
+                { question: "Waarom is goede hygiëne bij geslachtsdelen belangrijk?", options: ["Om infecties te voorkomen", "Omdat het er mooi uitziet", "Omdat het goed ruikt"], answer: "Om infecties te voorkomen" },
+                { question: "Wat is een belangrijk aandachtspunt voor vrouwen tijdens de menstruatie?", options: ["Geen producten gebruiken", "Regelmatig verschonen en schoonhouden", "Zoveel mogelijk water drinken"], answer: "Regelmatig verschonen en schoonhouden" }
+            ]
+        };
+
+        let currentChapter = "Hoofdstuk 2";
+        let currentQuestion = 0;
+        let score = localStorage.getItem("quizScore") ? parseInt(localStorage.getItem("quizScore")) : 0;
+        document.getElementById("score").innerText = score;
+
+        function loadQuestion() {
+            if (currentQuestion >= quiz[currentChapter].length) {
+                document.querySelector(".question").innerText = "Quiz afgerond! Je eindscore is " + score;
+                document.getElementById("answers").innerHTML = "<button class='btn' onclick='restartQuiz()'>Opnieuw spelen</button>";
+                return;
+            }
+            
+            document.querySelector(".question").innerText = quiz[currentChapter][currentQuestion].question;
+            document.getElementById("answers").innerHTML = "";
+            
+            quiz[currentChapter][currentQuestion].options.forEach(option => {
+                let btn = document.createElement("button");
+                btn.innerText = option;
+                btn.classList.add("btn");
+                btn.onclick = () => checkAnswer(option);
+                document.getElementById("answers").appendChild(btn);
+            });
+        }
+
+        function checkAnswer(answer) {
+            if (answer === quiz[currentChapter][currentQuestion].answer) {
+                score += 10;
+                localStorage.setItem("quizScore", score);
+                document.getElementById("score").innerText = score;
+            }
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function restartQuiz() {
+            score = 0;
+            localStorage.setItem("quizScore", score);
+            currentQuestion = 0;
+            document.getElementById("score").innerText = score;
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
